@@ -1,0 +1,7 @@
+/.parcel-cache
+/cache
+/dist
+/node_modules
+/target
+
+config.toml

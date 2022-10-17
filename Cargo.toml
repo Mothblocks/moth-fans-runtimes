@@ -1,0 +1,28 @@
+[package]
+name = "moth-fans-runtimes"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+axum = "0.5.16"
+axum-extra = { version = "0.3.7", features = ["spa"] }
+chrono = { version = "0.4.22", features = ["serde"] }
+color-eyre = "0.6.2"
+regex = "1.6.0"
+reqwest = { version = "0.11.12", features = ["rustls-tls", "json"] }
+serde = { version = "1.0.145", features = ["derive"] }
+serde_json = "1.0.86"
+sqlx = { version = "0.6.2", features = [
+	"chrono",
+	"mysql",
+	"runtime-tokio-rustls",
+] }
+tokio = { version = "1.21.2", features = ["full"] }
+toml = "0.5.9"
+tracing = "0.1.37"
+tracing-subscriber = "0.3.16"
+
+[dev-dependencies]
+insta = { version = "1.21.0", features = ["json"] }

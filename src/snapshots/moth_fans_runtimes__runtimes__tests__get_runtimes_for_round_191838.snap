@@ -1,0 +1,175 @@
+---
+source: src/runtimes.rs
+assertion_line: 132
+expression: "get_runtimes_for_round(include_str!(\"./test_data/191838-runtime.condensed.txt\")).unwrap()"
+---
+[
+  {
+    "count": 21886,
+    "exception": "Cannot execute null.return air().",
+    "proc_path": "/obj/machinery/meter/process_atmos",
+    "source_file": "meter.dm",
+    "line": 58,
+    "best_guess_filename": null
+  },
+  {
+    "count": 511,
+    "exception": "Cannot execute null.archive().",
+    "proc_path": "/turf/open/process_cell",
+    "source_file": "LINDA_turf_tile.dm",
+    "line": 281,
+    "best_guess_filename": null
+  },
+  {
+    "count": 240,
+    "exception": "undefined variable /turf/closed/mineral/var/run_later",
+    "proc_path": "/turf/open/process_cell",
+    "source_file": "LINDA_turf_tile.dm",
+    "line": 276,
+    "best_guess_filename": null
+  },
+  {
+    "count": 53,
+    "exception": "undefined variable /turf/closed/wall/var/run_later",
+    "proc_path": "/turf/open/process_cell",
+    "source_file": "LINDA_turf_tile.dm",
+    "line": 276,
+    "best_guess_filename": null
+  },
+  {
+    "count": 31,
+    "exception": "undefined variable /turf/closed/wall/mineral/iron/var/run_later",
+    "proc_path": "/turf/open/process_cell",
+    "source_file": "LINDA_turf_tile.dm",
+    "line": 276,
+    "best_guess_filename": null
+  },
+  {
+    "count": 16,
+    "exception": "Cannot read null.len",
+    "proc_path": "/world/proc/preloader_setup",
+    "source_file": "preloader.dm",
+    "line": 12,
+    "best_guess_filename": null
+  },
+  {
+    "count": 16,
+    "exception": "_queue_verb() returned false because it was given an invalid callback! (code/controllers/subsystem/verb_manager.dm:61)",
+    "proc_path": "/proc/_stack_trace",
+    "source_file": "verb_manager.dm",
+    "line": 61,
+    "best_guess_filename": ") returned false because it was given an invalid callback! (code/controllers/subsystem/verb_manager.dm"
+  },
+  {
+    "count": 16,
+    "exception": "Cannot create objects of type null.",
+    "proc_path": "/datum/parsed_map/proc/build_coordinate",
+    "source_file": "reader.dm",
+    "line": 472,
+    "best_guess_filename": null
+  },
+  {
+    "count": 11,
+    "exception": "Cannot execute null.react().",
+    "proc_path": "/obj/machinery/atmospherics/components/tank/process_atmos",
+    "source_file": "tank.dm",
+    "line": 144,
+    "best_guess_filename": null
+  },
+  {
+    "count": 7,
+    "exception": "Cannot execute null.reset cooldowns().",
+    "proc_path": "/turf/open/process_cell",
+    "source_file": "LINDA_turf_tile.dm",
+    "line": 346,
+    "best_guess_filename": null
+  },
+  {
+    "count": 3,
+    "exception": "undefined variable /turf/closed/wall/r_wall/var/run_later",
+    "proc_path": "/turf/open/process_cell",
+    "source_file": "LINDA_turf_tile.dm",
+    "line": 276,
+    "best_guess_filename": null
+  },
+  {
+    "count": 2,
+    "exception": "Cannot read null.eye",
+    "proc_path": "/datum/hud/proc/update_parallax",
+    "source_file": "parallax.dm",
+    "line": 172,
+    "best_guess_filename": null
+  },
+  {
+    "count": 2,
+    "exception": "Cannot read null.parallax_layers_cached",
+    "proc_path": "/datum/hud/proc/remove_parallax",
+    "source_file": "parallax.dm",
+    "line": 41,
+    "best_guess_filename": null
+  },
+  {
+    "count": 2,
+    "exception": "Cannot modify null.parallax_layers_max.",
+    "proc_path": "/datum/hud/proc/apply_parallax_pref",
+    "source_file": "parallax.dm",
+    "line": 68,
+    "best_guess_filename": null
+  },
+  {
+    "count": 1,
+    "exception": "Cannot read null.client",
+    "proc_path": "/datum/action/vote/Remove",
+    "source_file": "vote.dm",
+    "line": 332,
+    "best_guess_filename": null
+  },
+  {
+    "count": 1,
+    "exception": "Cannot execute null.resolve().",
+    "proc_path": "/datum/forensics/proc/check_blood",
+    "source_file": "_forensics.dm",
+    "line": 232,
+    "best_guess_filename": null
+  },
+  {
+    "count": 1,
+    "exception": "Cannot read null.x",
+    "proc_path": "/atom/movable/screen/map_view/gateway_port/proc/update_portal_filters",
+    "source_file": "gateway.dm",
+    "line": 434,
+    "best_guess_filename": null
+  },
+  {
+    "count": 1,
+    "exception": "Cannot read null.visual_delay",
+    "proc_path": "/datum/move_loop/process",
+    "source_file": "movement_types.dm",
+    "line": 111,
+    "best_guess_filename": null
+  },
+  {
+    "count": 1,
+    "exception": "undefined variable /mob/living/simple_animal/mouse/var/w_uniform",
+    "proc_path": "/datum/hallucination/fake_item/start",
+    "source_file": "inhand_fake_item.dm",
+    "line": 19,
+    "best_guess_filename": null
+  },
+  {
+    "count": 1,
+    "exception": "Cannot read null.prefs",
+    "proc_path": "/proc/tgui_input_list",
+    "source_file": "list.dm",
+    "line": 25,
+    "best_guess_filename": null
+  },
+  {
+    "count": 1,
+    "exception": "addtimer called with a callback assigned to a qdeleted object. In the future such timers will not be supported and may refuse to run or run with a 0 wait (code/controllers/subsystem/timer.dm:583)",
+    "proc_path": "/proc/_stack_trace",
+    "source_file": "timer.dm",
+    "line": 583,
+    "best_guess_filename": "code/controllers/subsystem/timer.dm"
+  }
+]

@@ -1,0 +1,177 @@
+Note: The source file, src and usr are all from the FIRST of the identical runtimes. Everything else is cropped.
+
+Total unique runtimes: 21
+Total runtimes: 22803
+
+** Runtimes **
+
+The following runtime has occurred 21886 time(s).
+runtime error: Cannot execute null.return air().
+proc name: process atmos (/obj/machinery/meter/process_atmos)
+  source file: meter.dm,58
+  usr: null
+  src: the gas flow meter (/obj/machinery/meter)
+  src.loc: the plating (43,46,13) (/turf/open/floor/plating)
+
+
+The following runtime has occurred 511 time(s).
+runtime error: Cannot execute null.archive().
+proc name: process cell (/turf/open/process_cell)
+  source file: LINDA_turf_tile.dm,281
+  usr: null
+  src: hyperspace (40,65,13) (/turf/open/space/transit)
+
+
+The following runtime has occurred 240 time(s).
+runtime error: undefined variable /turf/closed/mineral/var/run_later
+proc name: process cell (/turf/open/process_cell)
+  source file: LINDA_turf_tile.dm,276
+  usr: null
+  src: hyperspace (39,20,13) (/turf/open/space/transit)
+
+
+The following runtime has occurred 53 time(s).
+runtime error: undefined variable /turf/closed/wall/var/run_later
+proc name: process cell (/turf/open/process_cell)
+  source file: LINDA_turf_tile.dm,276
+  usr: null
+  src: hyperspace (40,64,13) (/turf/open/space/transit)
+
+
+The following runtime has occurred 31 time(s).
+runtime error: undefined variable /turf/closed/wall/mineral/iron/var/run_later
+proc name: process cell (/turf/open/process_cell)
+  source file: LINDA_turf_tile.dm,276
+  usr: null
+  src: hyperspace (40,61,13) (/turf/open/space/transit)
+
+
+The following runtime has occurred 16 time(s).
+runtime error: Cannot read null.len
+proc name: preloader setup (/world/proc/preloader_setup)
+  source file: preloader.dm,12
+  usr: null
+  src: world
+
+
+The following runtime has occurred 16 time(s).
+runtime error: _queue_verb() returned false because it was given an invalid callback! (code/controllers/subsystem/verb_manager.dm:61)
+proc name:  stack trace (/proc/_stack_trace)
+  source file: stack_trace.dm,4
+  usr: Unknown (/mob/living/carbon/human)
+  src: null
+
+
+The following runtime has occurred 16 time(s).
+runtime error: Cannot create objects of type null.
+proc name: build coordinate (/datum/parsed_map/proc/build_coordinate)
+  source file: reader.dm,472
+  usr: null
+  src: /datum/parsed_map (/datum/parsed_map)
+
+
+The following runtime has occurred 11 time(s).
+runtime error: Cannot execute null.react().
+proc name: process atmos (/obj/machinery/atmospherics/components/tank/process_atmos)
+  source file: tank.dm,144
+  usr: null
+  src: the pressure tank (Air) (/obj/machinery/atmospherics/components/tank/air)
+  src.loc: the floor (48,90,13) (/turf/open/floor/iron/dark)
+
+
+The following runtime has occurred 7 time(s).
+runtime error: Cannot execute null.reset cooldowns().
+proc name: process cell (/turf/open/process_cell)
+  source file: LINDA_turf_tile.dm,346
+  usr: null
+  src: the plating (46,92,13) (/turf/open/floor/plating)
+
+
+The following runtime has occurred 3 time(s).
+runtime error: undefined variable /turf/closed/wall/r_wall/var/run_later
+proc name: process cell (/turf/open/process_cell)
+  source file: LINDA_turf_tile.dm,276
+  usr: null
+  src: hyperspace (50,89,13) (/turf/open/space/transit)
+
+
+The following runtime has occurred 2 time(s).
+runtime error: Cannot read null.eye
+proc name: update parallax (/datum/hud/proc/update_parallax)
+  source file: parallax.dm,172
+  usr: null
+  src: /datum/hud/human (/datum/hud/human)
+
+
+The following runtime has occurred 2 time(s).
+runtime error: Cannot read null.parallax_layers_cached
+proc name: remove parallax (/datum/hud/proc/remove_parallax)
+  source file: parallax.dm,41
+  usr: null
+  src: /datum/hud/human (/datum/hud/human)
+
+
+The following runtime has occurred 2 time(s).
+runtime error: Cannot modify null.parallax_layers_max.
+proc name: apply parallax pref (/datum/hud/proc/apply_parallax_pref)
+  source file: parallax.dm,68
+  usr: null
+  src: /datum/hud/human (/datum/hud/human)
+
+
+The following runtime has occurred 1 time(s).
+runtime error: Cannot read null.client
+proc name: Remove (/datum/action/vote/Remove)
+  source file: vote.dm,332
+  usr: null
+  src: Vote: Restart (/datum/action/vote)
+
+
+The following runtime has occurred 1 time(s).
+runtime error: Cannot execute null.resolve().
+proc name: check blood (/datum/forensics/proc/check_blood)
+  source file: _forensics.dm,232
+  usr: Unknown (/mob/living/carbon/human)
+  src: /datum/forensics (/datum/forensics)
+
+
+The following runtime has occurred 1 time(s).
+runtime error: Cannot read null.x
+proc name: update portal filters (/atom/movable/screen/map_view/gateway_port/proc/update_portal_filters)
+  source file: gateway.dm,434
+  usr: Sophie Stonelot (/mob/living/carbon/human)
+  src: the screen (/atom/movable/screen/map_view/gateway_port)
+
+
+The following runtime has occurred 1 time(s).
+runtime error: Cannot read null.visual_delay
+proc name: process (/datum/move_loop/process)
+  source file: movement_types.dm,111
+  usr: null
+  src: /datum/move_loop/has_target/di... (/datum/move_loop/has_target/dist_bound/move_to)
+
+
+The following runtime has occurred 1 time(s).
+runtime error: undefined variable /mob/living/simple_animal/mouse/var/w_uniform
+proc name: start (/datum/hallucination/fake_item/start)
+  source file: inhand_fake_item.dm,19
+  usr: null
+  src: /datum/hallucination/fake_item... (/datum/hallucination/fake_item/baton)
+
+
+The following runtime has occurred 1 time(s).
+runtime error: Cannot read null.prefs
+proc name: tgui input list (/proc/tgui_input_list)
+  source file: list.dm,25
+  usr: (src)
+  src: null
+
+
+The following runtime has occurred 1 time(s).
+runtime error: addtimer called with a callback assigned to a qdeleted object. In the future such timers will not be supported and may refuse to run or run with a 0 wait (code/controllers/subsystem/timer.dm:583)
+proc name:  stack trace (/proc/_stack_trace)
+  source file: stack_trace.dm,4
+  usr: Natoo-Milah (/mob/living/carbon/human)
+  src: null
+
+
