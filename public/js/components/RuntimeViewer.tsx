@@ -133,7 +133,9 @@ export const RuntimeViewer = ({ rounds }: { rounds: Round[] }) => {
         >
           {Array.from(masterFilenames).map((filename) => (
             <li key={filename}>
-              <a href={filename}>master - {extractCodeFile(filename)}</a>
+              <a href={filename} target="_blank" rel="noreferrer">
+                master - {extractCodeFile(filename)}
+              </a>
             </li>
           ))}
 
@@ -141,7 +143,7 @@ export const RuntimeViewer = ({ rounds }: { rounds: Round[] }) => {
 
           {Array.from(filenames).map((filename) => (
             <li key={filename}>
-              <a href={filename}>
+              <a href={filename} target="_blank" rel="noreferrer">
                 {filename
                   .match(/tree\/([a-z0-9]+)/)!
                   .at(1)
