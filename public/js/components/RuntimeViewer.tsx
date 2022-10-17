@@ -3,6 +3,13 @@ import { useNavigate, useParams } from "react-router-dom"
 import { Round } from "../data"
 import { runtimeToKey } from "../runtimeToKey"
 
+const PATTERN_CODE_FILE = /tgstation\/tree\/.+?\/(.+)$/
+
+const extractCodeFile = (filename: string) => {
+  const match = filename.match(PATTERN_CODE_FILE)
+  return match ? match[1] : filename
+}
+
 export const RuntimeViewer = ({ rounds }: { rounds: Round[] }) => {
   const { runtimeKey } = useParams()
   const navigate = useNavigate()
@@ -70,7 +77,8 @@ export const RuntimeViewer = ({ rounds }: { rounds: Round[] }) => {
       onClick={(event) => {
         if (
           event.target === ref.current ||
-          event.target instanceof HTMLLIElement
+          event.target instanceof HTMLLIElement ||
+          event.target instanceof HTMLUListElement
         ) {
           navigate("/")
         }
@@ -84,7 +92,7 @@ export const RuntimeViewer = ({ rounds }: { rounds: Round[] }) => {
         position: "absolute",
         top: 0,
 
-        height: "100%",
+        height: "104%",
         width: "100%",
       }}
     >
@@ -123,18 +131,22 @@ export const RuntimeViewer = ({ rounds }: { rounds: Round[] }) => {
             overflowY: "scroll",
           }}
         >
-          {Array.from(masterFilenames).map((filename, index) => (
+          {Array.from(masterFilenames).map((filename) => (
             <li key={filename}>
-              <a href={filename}>master ({index + 1})</a>
+              <a href={filename}>master - {extractCodeFile(filename)}</a>
             </li>
           ))}
 
           <hr />
 
-          {Array.from(filenames).map((filename, index) => (
+          {Array.from(filenames).map((filename) => (
             <li key={filename}>
               <a href={filename}>
-                {filename.match(/tree\/([a-z0-9]+)/)!.at(1)}
+                {filename
+                  .match(/tree\/([a-z0-9]+)/)!
+                  .at(1)
+                  ?.substring(0, 6)}{" "}
+                - {extractCodeFile(filename)}
               </a>
             </li>
           ))}

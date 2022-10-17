@@ -238,7 +238,7 @@ export const Main = ({ rounds }: { rounds: readonly Round[] }) => {
 
         <div
           style={{
-            height: "82vh",
+            height: "77vh",
             width: "100%",
             position: "relative",
           }}
