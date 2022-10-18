@@ -5,5 +5,5 @@ db_url = "mysql://username:password@host:port/db"
 
 rounds_cache_delay_secs = 600
 
-# Uncomment to use live data from DB
+# Comment to use live data from DB
 mock_runtimes_data = "mock_runtimes_data.json"
