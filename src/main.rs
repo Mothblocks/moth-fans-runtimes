@@ -38,7 +38,9 @@ async fn main() -> color_eyre::Result<()> {
 
     let state_arc = Arc::new(state);
 
-    tokio::task::spawn(track_rounds(state_arc.clone()));
+    if state_arc.config.mock_runtimes_data.is_none() {
+        tokio::task::spawn(track_rounds(state_arc.clone()));
+    }
 
     let app = Router::new()
         .merge(spa)

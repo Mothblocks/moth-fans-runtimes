@@ -7,6 +7,19 @@ use crate::{rounds::Round, state::AppState};
 
 pub static CACHED_RESPONSE: OnceCell<Mutex<(std::time::Instant, String)>> = OnceCell::new();
 
+const CACHE_SECONDS: u64 = 60;
+const CACHE_CONTROL: &str = "max-age=60";
+
+fn create_response(text: String) -> impl IntoResponse {
+    (
+        [
+            ("content-type", "application/json"),
+            ("cache-control", CACHE_CONTROL),
+        ],
+        text,
+    )
+}
+
 #[tracing::instrument]
 pub async fn data(Extension(state): Extension<Arc<AppState>>) -> impl IntoResponse {
     let now = std::time::Instant::now();
@@ -16,9 +29,9 @@ pub async fn data(Extension(state): Extension<Arc<AppState>>) -> impl IntoRespon
         let last_updated = lock.0;
         let response = &lock.1;
 
-        if now.duration_since(last_updated).as_secs() < 60 {
+        if now.duration_since(last_updated).as_secs() < CACHE_SECONDS {
             tracing::trace!("returning cached response");
-            return ([("content-type", "application/json")], response.clone()).into_response();
+            return create_response(response.clone());
         }
     }
 
@@ -37,5 +50,5 @@ pub async fn data(Extension(state): Extension<Arc<AppState>>) -> impl IntoRespon
 
     tracing::trace!("returning fresh response");
 
-    ([("content-type", "application/json")], response).into_response()
+    create_response(response)
 }
