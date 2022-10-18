@@ -1,4 +1,4 @@
-use std::{collections::HashMap, io::Read, path::PathBuf, time::Duration};
+use std::{collections::HashMap, path::PathBuf, time::Duration};
 
 use chrono::{Datelike, NaiveDateTime};
 use color_eyre::eyre::Context;

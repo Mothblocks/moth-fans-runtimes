@@ -11,6 +11,8 @@ pub struct Config {
     pub db_url: String,
 
     pub mock_runtimes_data: Option<PathBuf>,
+
+    pub rounds_cache_delay_secs: u64,
 }
 
 impl Config {
