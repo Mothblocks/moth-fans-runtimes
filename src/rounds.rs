@@ -365,7 +365,7 @@ impl RoundCollectionContext {
         };
 
         self.test_merges.insert(commit.clone(), test_merge.clone());
-        let cache_file_path = format!("cache/test_merges/{number}_{commit}.json");
+        let cache_file_path = test_merge.cache_file_path();
 
         match std::fs::File::create(&cache_file_path) {
             Ok(file) => {
@@ -376,7 +376,8 @@ impl RoundCollectionContext {
 
             Err(error) => {
                 tracing::warn!(
-                    "couldn't open file `{cache_file_path}` to save test merge\n{error}"
+                    "couldn't open file `{}` to save test merge\n{error}",
+                    cache_file_path.display()
                 );
             }
         }
@@ -402,6 +403,15 @@ pub struct Round {
 pub struct TestMerge {
     pub details: TestMergeDetails,
     pub files_changed: Option<Vec<PathBuf>>,
+}
+
+impl TestMerge {
+    pub fn cache_file_path(&self) -> PathBuf {
+        PathBuf::from(format!(
+            "cache/test_merges/{}_{}.json",
+            self.details.number, self.details.commit
+        ))
+    }
 }
 
 #[derive(Clone, Eq, PartialEq, Hash, Deserialize, Serialize)]

@@ -1,4 +1,4 @@
-use std::{fmt::Debug, ops::Deref};
+use std::{collections::HashSet, fmt::Debug, ops::Deref, path::PathBuf};
 
 use color_eyre::eyre::Context;
 use sqlx::{Connection, Row};
@@ -46,7 +46,6 @@ impl AppState {
 
     // TODO: Update when expired in the BACKGROUND.
     // (That's why this isn't a OnceCell).
-    // TODO: Trash old rounds/test merges in cache to save file space.
     pub async fn rounds(&self) -> color_eyre::Result<impl Deref<Target = Vec<Round>> + '_> {
         {
             let rounds_lock = self.rounds.read().await;
@@ -107,6 +106,37 @@ impl AppState {
             }
         }
 
+        self.trash_old_cache(&rounds).await;
+
         Ok(rounds)
+    }
+
+    async fn trash_old_cache(&self, rounds: &[Round]) {
+        let mut used_files = HashSet::new();
+
+        for round in rounds {
+            used_files.insert(PathBuf::from(format!(
+                "cache/rounds/{}.json",
+                round.round_id
+            )));
+
+            for test_merge in &round.test_merges {
+                used_files.insert(test_merge.cache_file_path());
+            }
+        }
+
+        for parent in ["cache/rounds", "cache/test_merges"] {
+            if let Ok(entries) = std::fs::read_dir(parent) {
+                for entry in entries.flatten() {
+                    if !used_files.contains(entry.path().as_path()) {
+                        tracing::debug!("trashing old cache file {}", entry.path().display());
+
+                        if let Err(error) = std::fs::remove_file(entry.path()) {
+                            tracing::warn!("couldn't trash old cache file: {error}");
+                        }
+                    }
+                }
+            }
+        }
     }
 }
