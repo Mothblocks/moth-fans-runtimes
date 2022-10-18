@@ -27,7 +27,7 @@ where
 
         let value = serde_json::from_str(&contents)?;
 
-        tracing::debug!("loading cached value from `{}`", cache_file_path.display());
+        tracing::trace!("loading cached value from `{}`", cache_file_path.display());
 
         Ok(value)
     } else {

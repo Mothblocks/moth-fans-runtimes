@@ -218,7 +218,7 @@ impl RoundCollectionContext {
 
                 let commit = test_merge.details.commit.clone();
 
-                tracing::debug!(
+                tracing::trace!(
                     "loaded cached test merge {} ({})",
                     test_merge.details.number,
                     commit

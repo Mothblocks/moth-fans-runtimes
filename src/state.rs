@@ -10,7 +10,7 @@ use tokio::{
 use crate::{config::Config, rounds::Round};
 
 pub struct AppState {
-    config: Config,
+    pub config: Config,
     rounds: RwLock<Option<Vec<Round>>>,
 }
 
@@ -47,8 +47,6 @@ impl AppState {
             .map_err(|error| error.into())
     }
 
-    // TODO: Update when expired in the BACKGROUND.
-    // (That's why this isn't a OnceCell).
     pub async fn rounds(&self) -> color_eyre::Result<impl Deref<Target = Vec<Round>> + '_> {
         {
             let rounds_lock = self.rounds.read().await;
@@ -59,16 +57,20 @@ impl AppState {
             }
         }
 
-        {
-            // Hold onto the lock for this entire time so nothing else tries to run DB queries
-            let mut rounds_write = self.rounds.write().await;
-
-            *rounds_write = Some(self.load_rounds().await?);
-        }
+        self.save_new_rounds().await?;
 
         Ok(RwLockReadGuard::map(self.rounds.read().await, |rounds| {
             rounds.as_ref().expect("rounds is None")
         }))
+    }
+
+    pub async fn save_new_rounds(&self) -> color_eyre::Result<()> {
+        // Hold onto the lock for this entire time so nothing else tries to run DB queries
+        let mut rounds_write = self.rounds.write().await;
+
+        *rounds_write = Some(self.load_rounds().await?);
+
+        Ok(())
     }
 
     #[tracing::instrument]

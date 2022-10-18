@@ -36,10 +36,14 @@ async fn main() -> color_eyre::Result<()> {
 
     let spa = SpaRouter::new("/static", "dist");
 
+    let state_arc = Arc::new(state);
+
+    tokio::task::spawn(track_rounds(state_arc.clone()));
+
     let app = Router::new()
         .merge(spa)
         .route("/data.json", axum::routing::get(routes::data))
-        .layer(Extension(Arc::new(state)));
+        .layer(Extension(state_arc));
 
     tracing::debug!("listening on {address}");
 
@@ -49,4 +53,25 @@ async fn main() -> color_eyre::Result<()> {
         .unwrap();
 
     Ok(())
+}
+
+async fn track_rounds(state: Arc<state::AppState>) {
+    loop {
+        tokio::time::sleep(std::time::Duration::from_secs(
+            state.config.rounds_cache_delay_secs,
+        ))
+        .await;
+
+        tracing::trace!("updating rounds cache");
+
+        match state.save_new_rounds().await {
+            Ok(()) => {
+                tracing::trace!("updated rounds cache");
+            }
+
+            Err(error) => {
+                tracing::error!("error loading rounds: {error}");
+            }
+        }
+    }
 }

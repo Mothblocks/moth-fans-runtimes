@@ -2,7 +2,7 @@ use std::{net::IpAddr, path::PathBuf};
 
 use serde::Deserialize;
 
-#[derive(Deserialize)]
+#[derive(Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Config {
     pub address: IpAddr,
