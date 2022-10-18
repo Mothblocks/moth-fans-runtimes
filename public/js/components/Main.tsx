@@ -114,7 +114,9 @@ export const Main = ({ rounds }: { rounds: readonly Round[] }) => {
   const [serverFilter, setServerFilter] = useState("all")
   const [timeframe, setTimeframe] = useState(7)
   const [collateSimilar, setCollateSimilar] = useState(true)
+
   const [search, setSearch] = useState("")
+  const lowercaseSearch = search.toLowerCase()
 
   const dateOfLastRound = new Date(rounds[rounds.length - 1].timestamp)
 
@@ -146,7 +148,11 @@ export const Main = ({ rounds }: { rounds: readonly Round[] }) => {
         const runtimesAfterFiltering: RuntimeBatch[] = []
 
         for (const runtime of round.runtimes || []) {
-          if (runtime.exception.toLowerCase().includes(search.toLowerCase())) {
+          if (
+            runtime.exception.toLowerCase().includes(lowercaseSearch) ||
+            runtime.source_file.toLowerCase().includes(lowercaseSearch) ||
+            runtime.proc_path.toString().includes(lowercaseSearch)
+          ) {
             runtimesAfterFiltering.push(runtime)
           }
         }
