@@ -2,7 +2,10 @@ use std::{collections::HashSet, fmt::Debug, ops::Deref, path::PathBuf};
 
 use color_eyre::eyre::Context;
 use sqlx::{Connection, Row};
-use tokio::sync::{RwLock, RwLockReadGuard};
+use tokio::{
+    io::AsyncReadExt,
+    sync::{RwLock, RwLockReadGuard},
+};
 
 use crate::{config::Config, rounds::Round};
 
@@ -71,14 +74,17 @@ impl AppState {
     #[tracing::instrument]
     async fn load_rounds(&self) -> color_eyre::Result<Vec<Round>> {
         if let Some(mock_runtimes_data_filename) = &self.config.mock_runtimes_data {
-            match std::fs::File::open(&mock_runtimes_data_filename) {
-                Ok(file) => {
+            match tokio::fs::File::open(&mock_runtimes_data_filename).await {
+                Ok(mut file) => {
                     tracing::debug!(
                         "loading mock runtimes data from `{}`",
                         mock_runtimes_data_filename.display()
                     );
 
-                    return serde_json::from_reader(file).context("couldn't parse mock data");
+                    let mut contents = String::new();
+                    file.read_to_string(&mut contents).await?;
+
+                    return serde_json::from_str(&contents).context("couldn't parse mock data");
                 }
                 Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
                 Err(error) => {
@@ -100,7 +106,7 @@ impl AppState {
             );
 
             if let Err(error) =
-                std::fs::write(mock_runtimes_data_filename, serde_json::to_string(&rounds)?)
+                tokio::fs::write(mock_runtimes_data_filename, serde_json::to_string(&rounds)?).await
             {
                 tracing::warn!("couldn't write mock data: {error}");
             }
@@ -126,12 +132,12 @@ impl AppState {
         }
 
         for parent in ["cache/rounds", "cache/test_merges"] {
-            if let Ok(entries) = std::fs::read_dir(parent) {
-                for entry in entries.flatten() {
+            if let Ok(mut entries) = tokio::fs::read_dir(parent).await {
+                while let Ok(Some(entry)) = entries.next_entry().await {
                     if !used_files.contains(entry.path().as_path()) {
                         tracing::debug!("trashing old cache file {}", entry.path().display());
 
-                        if let Err(error) = std::fs::remove_file(entry.path()) {
+                        if let Err(error) = tokio::fs::remove_file(entry.path()).await {
                             tracing::warn!("couldn't trash old cache file: {error}");
                         }
                     }

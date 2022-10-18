@@ -1,9 +1,10 @@
-use std::{collections::HashMap, path::PathBuf, time::Duration};
+use std::{collections::HashMap, io::Read, path::PathBuf, time::Duration};
 
 use chrono::{Datelike, NaiveDateTime};
 use color_eyre::eyre::Context;
 use serde::{Deserialize, Serialize};
 use sqlx::{mysql::MySqlRow, MySqlConnection, Row};
+use tokio::io::AsyncReadExt;
 
 use crate::{
     file_cache::from_cache_or,
@@ -174,32 +175,36 @@ impl RoundCollectionContext {
     async fn reload() -> Self {
         let mut test_merges = HashMap::new();
 
-        std::fs::create_dir_all("cache/test_merges")
+        tokio::fs::create_dir_all("cache/test_merges")
+            .await
             .expect("failed to create test_merges cache dir");
 
-        if let Ok(read_dir) = std::fs::read_dir("cache/test_merges") {
-            for entry in read_dir {
-                let entry = match entry {
-                    Ok(entry) => entry,
-                    Err(error) => {
-                        tracing::warn!(
-                            "couldn't retrieve directory entry when loading test merges\n{error}"
-                        );
+        if let Ok(mut read_dir) = tokio::fs::read_dir("cache/test_merges").await {
+            // for entry in read_dir {
+            while let Ok(Some(entry)) = read_dir.next_entry().await {
+                let test_merge: TestMerge = match tokio::fs::File::open(entry.path()).await {
+                    Ok(mut file) => {
+                        let mut contents = String::new();
+                        match file.read_to_string(&mut contents).await {
+                            Ok(_) => match serde_json::from_str(&contents) {
+                                Ok(test_merge) => test_merge,
 
-                        continue;
-                    }
-                };
+                                Err(error) => {
+                                    tracing::warn!(
+                                        "couldn't deserialize test merge from file\n{error}"
+                                    );
 
-                let test_merge: TestMerge = match std::fs::File::open(entry.path()) {
-                    Ok(file) => match serde_json::from_reader(file) {
-                        Ok(test_merge) => test_merge,
+                                    continue;
+                                }
+                            },
 
-                        Err(error) => {
-                            tracing::warn!("couldn't deserialize test merge from file\n{error}");
+                            Err(error) => {
+                                tracing::warn!("couldn't read test merge file\n{error}");
 
-                            continue;
+                                continue;
+                            }
                         }
-                    },
+                    }
 
                     Err(error) => {
                         tracing::warn!(
@@ -266,10 +271,12 @@ impl RoundCollectionContext {
                         names.entry(name).or_default().push(entry.path);
                     }
 
-                    if let Err(error) = std::fs::write(
+                    if let Err(error) = tokio::fs::write(
                         GIT_TREE_CACHE_FILE,
                         serde_json::to_string_pretty(&names).unwrap(),
-                    ) {
+                    )
+                    .await
+                    {
                         tracing::warn!("failed to save git tree to cache\n{error}");
                     }
 
@@ -288,16 +295,24 @@ impl RoundCollectionContext {
 
         tracing::debug!("attempting to load git tree from cache");
 
-        if let Ok(file) = std::fs::File::open(GIT_TREE_CACHE_FILE) {
-            match serde_json::from_reader(file) {
-                Ok(git_tree) => {
-                    tracing::debug!("loaded git tree from cache");
+        if let Ok(mut file) = tokio::fs::File::open(GIT_TREE_CACHE_FILE).await {
+            let mut contents = String::new();
 
-                    return git_tree;
-                }
+            match file.read_to_string(&mut contents).await {
+                Ok(_) => match serde_json::from_str(&contents) {
+                    Ok(git_tree) => {
+                        tracing::debug!("loaded git tree from cache");
+
+                        return git_tree;
+                    }
+
+                    Err(error) => {
+                        tracing::warn!("failed to deserialize git tree from cache\n{error}");
+                    }
+                },
 
                 Err(error) => {
-                    tracing::warn!("failed to deserialize git tree from cache\n{error}");
+                    tracing::warn!("failed to read git tree from cache\n{error}");
                 }
             }
         } else {
@@ -367,9 +382,9 @@ impl RoundCollectionContext {
         self.test_merges.insert(commit.clone(), test_merge.clone());
         let cache_file_path = test_merge.cache_file_path();
 
-        match std::fs::File::create(&cache_file_path) {
+        match tokio::fs::File::create(&cache_file_path).await {
             Ok(file) => {
-                if let Err(error) = serde_json::to_writer(file, &test_merge) {
+                if let Err(error) = serde_json::to_writer(file.into_std().await, &test_merge) {
                     tracing::warn!("couldn't serialize test merge to file\n{error}");
                 }
             }
