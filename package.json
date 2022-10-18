@@ -4,7 +4,8 @@
 	"author": "Mothblocks",
 	"license": "MPL-2.0",
 	"scripts": {
-		"start": "parcel watch public/index.html --public-url /static/"
+		"dev": "parcel watch public/index.html --public-url /static/",
+		"build": "parcel build public/index.html --public-url /static/"
 	},
 	"dependencies": {
 		"chart.js": "^3.9.1",

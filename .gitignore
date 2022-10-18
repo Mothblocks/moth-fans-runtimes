@@ -5,3 +5,6 @@
 /target
 
 config.toml
+config.prod.toml
+
+push.sh
