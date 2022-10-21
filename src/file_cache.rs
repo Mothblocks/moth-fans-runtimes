@@ -8,11 +8,16 @@ use tokio::{
 
 static CACHE_PATH: &str = "cache";
 
+pub enum CacheResult<T> {
+    Save(T),
+    DontSave(T),
+}
+
 // TODO: Replace this with sqlite someday
 pub async fn from_cache_or<T, F, Ft>(path: &str, callback: F) -> color_eyre::Result<T>
 where
     F: FnOnce() -> Ft,
-    Ft: Future<Output = color_eyre::Result<T>>,
+    Ft: Future<Output = color_eyre::Result<CacheResult<T>>>,
     T: DeserializeOwned + Serialize,
 {
     fs::create_dir_all(PathBuf::from(CACHE_PATH).join(path).parent().unwrap())
@@ -31,7 +36,13 @@ where
 
         Ok(value)
     } else {
-        let value = callback().await?;
+        let value = match callback().await? {
+            CacheResult::Save(value) => value,
+
+            CacheResult::DontSave(value) => {
+                return Ok(value);
+            }
+        };
 
         let mut file = fs::File::create(&cache_file_path).await?;
 

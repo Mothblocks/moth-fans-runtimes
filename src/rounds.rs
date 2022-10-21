@@ -7,7 +7,7 @@ use sqlx::{mysql::MySqlRow, MySqlConnection, Row};
 use tokio::io::AsyncReadExt;
 
 use crate::{
-    file_cache::from_cache_or,
+    file_cache::{from_cache_or, CacheResult},
     request::request,
     runtimes::{BestGuessFilenames, RuntimeBatch},
 };
@@ -86,7 +86,19 @@ async fn load_round_from_row(
 
         let timestamp = row.get("initialize_datetime");
 
-        Ok(Round {
+        let runtimes = match load_runtimes_from(context, round_id, port, &timestamp).await {
+            Ok(runtimes) => Some(runtimes),
+
+            Err(error) => {
+                tracing::warn!("error loading runtimes for round {round_id}: {error}");
+
+                None
+            }
+        };
+
+        let should_save = runtimes.is_some();
+
+        let round = Round {
             round_id,
             server: match crate::servers::server_by_port(port) {
                 Some(server) => server.name.to_owned(),
@@ -94,20 +106,18 @@ async fn load_round_from_row(
             },
             revision: row.try_get("commit_hash")?,
 
-            runtimes: match load_runtimes_from(context, round_id, port, &timestamp).await {
-                Ok(runtimes) => Some(runtimes),
-
-                Err(error) => {
-                    tracing::warn!("error loading runtimes for round {round_id}: {error}");
-
-                    None
-                }
-            },
+            runtimes,
 
             timestamp,
 
             test_merges,
-        })
+        };
+
+        if should_save {
+            Ok(CacheResult::Save(round))
+        } else {
+            Ok(CacheResult::DontSave(round))
+        }
     })
     .await
 }
