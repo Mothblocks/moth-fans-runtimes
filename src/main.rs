@@ -30,6 +30,7 @@ async fn main() -> color_eyre::Result<()> {
 
     {
         tracing::debug!("loading rounds");
+        state.save_new_rounds().await?;
         let rounds = state.rounds().await?;
         tracing::debug!("loaded {} rounds", rounds.len());
     }

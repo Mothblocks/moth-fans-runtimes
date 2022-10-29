@@ -47,19 +47,28 @@ impl AppState {
             .map_err(|error| error.into())
     }
 
-    pub async fn rounds(&self) -> color_eyre::Result<impl Deref<Target = Vec<Round>> + '_> {
-        {
-            let rounds_lock = self.rounds.read().await;
-            if rounds_lock.is_some() {
-                return Ok(RwLockReadGuard::map(rounds_lock, |rounds| {
+    pub fn try_rounds(&self) -> color_eyre::Result<Option<impl Deref<Target = Vec<Round>> + '_>> {
+        match self.rounds.try_read() {
+            Ok(rounds_lock) if rounds_lock.is_some() => {
+                return Ok(Some(RwLockReadGuard::map(rounds_lock, |rounds| {
                     rounds.as_ref().expect("rounds is None")
-                }));
+                })));
             }
+
+            Ok(_) => {
+                unreachable!(
+                    "rounds is None, even though save_new_rounds() should have been called"
+                );
+            }
+
+            Err(_) => Ok(None),
         }
+    }
 
-        self.save_new_rounds().await?;
+    pub async fn rounds(&self) -> color_eyre::Result<impl Deref<Target = Vec<Round>> + '_> {
+        let rounds_lock = self.rounds.read().await;
 
-        Ok(RwLockReadGuard::map(self.rounds.read().await, |rounds| {
+        Ok(RwLockReadGuard::map(rounds_lock, |rounds| {
             rounds.as_ref().expect("rounds is None")
         }))
     }
@@ -68,7 +77,13 @@ impl AppState {
         // Hold onto the lock for this entire time so nothing else tries to run DB queries
         let mut rounds_write = self.rounds.write().await;
 
-        *rounds_write = Some(self.load_rounds().await?);
+        *rounds_write = Some(match self.load_rounds().await {
+            Ok(rounds) => rounds,
+            Err(error) => {
+                tracing::error!("error loading rounds: {error}");
+                return Err(error);
+            }
+        });
 
         Ok(())
     }

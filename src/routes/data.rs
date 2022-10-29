@@ -29,8 +29,15 @@ pub async fn data(Extension(state): Extension<Arc<AppState>>) -> impl IntoRespon
         let last_updated = lock.0;
         let response = &lock.1;
 
+        let lock_unavailable = matches!(state.try_rounds(), Ok(None));
+
         if now.duration_since(last_updated).as_secs() < CACHE_SECONDS {
             tracing::trace!("returning cached response");
+            return create_response(response.clone());
+        }
+
+        if lock_unavailable {
+            tracing::trace!("couldn't get lock");
             return create_response(response.clone());
         }
     }
